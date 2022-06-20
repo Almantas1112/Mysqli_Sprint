@@ -133,6 +133,59 @@ if (isset($_GET['employees'])) {
     mysqli_close($conn);
 }
 
+if (isset($_GET['update'])){
+    $name = $_GET['update'];
+    $project = "SELECT * FROM projects;";
+    $result = mysqli_query($conn,$project);
+    echo '<div class="updatingEmployees">
+    <form action="" method="post">
+    <label for="newName">New name for '.$name.' will be:</label>
+    <input type="text" name="newName" value="'.$name.'">
+    <label for="newProject">And new project will be:</label>
+    <select name="newProject">';
+        while ($row = mysqli_fetch_array($result)){
+            echo '<option value="'.$row['id'].'">'.$row['project_name'].'</option>';
+        }
+    echo '</select>
+    <input type="hidden" name="submit" value="'.$name.'">
+    <input type="submit" value="Submit">
+    </form></div>';
+    if(isset($_POST['submit'])){
+        $oldName = $_POST['submit'];
+        $newName = $_POST['newName'];
+        $newProject = $_POST['newProject'];
+        $update = "UPDATE employees SET name='$newName', project_id=$newProject WHERE name='$oldName';";
+        mysqli_query($conn,$update);
+        mysqli_close($conn);
+        ob_start();
+        header('Location: ?employees=Employees');
+        ob_end_flush();
+        die();
+    }
+}
+
+if (isset($_GET['updateProject'])){
+    $name = $_GET['updateProject']; //id
+    echo '<div class="updatingProject">
+    <form action="" method="post">
+    <label for="newName">New project name will be:</label>
+    <input type="text" name="newName">
+    <input type="hidden" name="submit" value="'.$name.'">
+    <input type="submit" value="Submit">
+    </form></div>';
+    if(isset($_POST['submit'])){
+        $oldProjectID = $_POST['submit'];
+        $newProjectName = $_POST['newName'];
+        $update = "UPDATE projects SET project_name='$newProjectName' WHERE id='$oldProjectID';";
+        mysqli_query($conn,$update);
+        mysqli_close($conn);
+        ob_start();
+        header('Location: ?full=Show');
+        ob_end_flush();
+        die();
+    }
+}
+
 if(isset($_GET['full'])){
     $full_projects = "SELECT * FROM projects WHERE id > 0;";
     $full = mysqli_query($conn, $full_projects);
