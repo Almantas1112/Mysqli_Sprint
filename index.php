@@ -19,6 +19,54 @@ if($_SERVER['REQUEST_URI'] == "/mysqli/" or $_SERVER['REQUEST_URI'] == "/mysqli/
     echo '<meta http-equiv="Refresh" content="0; url=?employees=Employees">';
 }
 
+if(isset($_GET['addProject'])){
+    echo '<div class="addingProject">
+    <form action="" method="post">
+    <label for="projectName">New project name:</label>
+    <input type="text" name="projectName">
+    <input type="submit" name="addProject">
+    </form>
+    </div>';
+    if(isset($_POST['addProject'])){
+        $projectName = $_POST['projectName'];
+        $addingProject = "INSERT INTO projects (project_name) VALUES ('$projectName')";
+        mysqli_query($conn,$addingProject);
+        mysqli_close($conn);
+        ob_start();
+        header('Location: ?full=Show');
+        ob_end_flush();
+        die();
+    }
+}
+
+if(isset($_GET['addEmployees'])){
+    $projects = "SELECT * FROM projects;";
+    $result = mysqli_query($conn, $projects);
+    echo '<div class="addingEmployees">
+    <form action="" method="post">
+    <label for="name">New employee name:</label>
+    <input type="text" name="name">
+    <label for="project">Project for new employee:</label>
+    <select name="project">';
+    while($row = mysqli_fetch_array($result)){
+        echo '<option value="'.$row['id'].'">'.$row['project_name'].'</option>';
+    }
+    echo '</select>
+    <input type="submit" name="add">
+    </form></div>';
+    if(isset($_POST['add'])) {
+        $name = $_POST['name'];
+        $project_id = $_POST['project'];
+        $addToDb = "INSERT INTO employees (name, project_id) VALUES ('$name', $project_id)";
+        mysqli_query($conn,$addToDb);
+        mysqli_close($conn);
+        ob_start();
+        header('Location: ?employees=Employees');
+        ob_end_flush();
+        die();
+    }
+}
+
 if (isset($_GET['employees'])) {
     $retrive_employees = "SELECT employees.id as id, employees.name as name, projects.project_name as project
     FROM employees, projects
