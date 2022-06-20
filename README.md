@@ -8,9 +8,9 @@ This is Employee and project manager with database. This project is made with PH
 
 In this system you can:
 
-1.Add employee and project.
-2.Update project and employee.
-3.Delete employee and project.
+1. Add employee and project.
+2. Update project and employee.
+3. Delete employee and project.
 
 ## Installation
 
