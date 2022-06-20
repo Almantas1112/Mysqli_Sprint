@@ -133,4 +133,60 @@ if (isset($_GET['employees'])) {
     mysqli_close($conn);
 }
 
+if(isset($_GET['full'])){
+    $full_projects = "SELECT * FROM projects WHERE id > 0;";
+    $full = mysqli_query($conn, $full_projects);
+    if(mysqli_num_rows($full)==0){
+        echo "No projects found!";
+    } else {
+        echo "<table style='font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse; width: 99.99%; margin-top: 2rem; text-align: center;'>";
+        echo "<tr style='text-transform: uppercase;'>";
+        echo "<th style='padding-top: 12px;padding-bottom: 12px;
+        background-color: #04AA6D;color: white;'>ID</th>";
+        echo "<th style='padding-top: 12px;padding-bottom: 12px;
+        background-color: #04AA6D;color: white;'>Project</th>";
+        echo "<th style='padding-top: 12px;padding-bottom: 12px;
+        background-color: #04AA6D;color: white;'>Action</th>";
+        echo "</tr>";
+        while($row = mysqli_fetch_array($full)){
+            echo "<tr>";
+            echo "<td style='border: 1px solid #ddd;padding: 8px;'>".$row['id']."</td>";
+            echo "<td style='border: 1px solid #ddd;padding: 8px;'>".$row['project_name']."</td>";
+            echo '<td style="border: 1px solid #ddd;padding: 8px;">
+            <form action="" method="post" style="display: inline;">
+            <input type="hidden" name="deleteProject" value="'.$row['id'].'">
+            <input type="submit" value="Delete">
+            </form>
+            <form action="" method="get" style="display: inline;">
+            <input type="hidden" name="updateProject" value="'.$row['id'].'">
+            <input type="submit" value="Update">
+            </form>
+            </td>';
+            echo "</tr>";
+        }
+        echo "</table>";
+        echo "<form action='' method='GET'>
+        <div style='text-align:center; font-size: 3.5rem;'>
+        <label for='projects'>Press here to get back: </label>
+        </div>
+        <div style='text-align:center;'>
+        <input type='submit' name='projects' value='Back'>
+        </div>
+        </form>";
+    }
+    if (isset($_POST['deleteProject'])){
+        $name = $_POST['deleteProject'];
+        $delete_project = "DELETE FROM projects WHERE id = '$name';";
+        $update_employee = "UPDATE employees SET project_id = 0 WHERE project_id = '$name';";
+        mysqli_query($conn,$delete_project);
+        mysqli_query($conn,$update_employee);
+        ob_start();
+        header('Location: ?full=Show');
+        ob_end_flush();
+        die();
+    }
+    mysqli_close($conn);
+}
+
 echo "</body>";
